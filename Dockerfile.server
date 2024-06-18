@@ -1,0 +1,27 @@
+# Use the official Go image for version 1.21.0
+FROM golang:1.21.0-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy go.mod and go.sum files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the entire application code
+COPY . .
+
+# Build the Go application
+RUN go build -o chat-server ./server/main.go
+
+# List files to debug and verify the 'server' binary
+RUN ls -l /app
+
+# Ensure the server binary has executable permissions
+RUN chmod +x /app/chat-server
+
+# Expose the port that the server will run on
+EXPOSE 8080
+
+# Run the Go application
+CMD ["/app/chat-server"]

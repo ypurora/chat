@@ -1,0 +1,24 @@
+# Use the official Go image for version 1.21.0
+FROM golang:1.21.0-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy go.mod and go.sum files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the entire application code, excluding the output folder as specified in .dockerignore
+COPY . .
+
+# Build the Go application
+RUN go build -o chat-client ./client/main.go
+
+# List files to debug and verify the 'chat-client' binary
+RUN ls -l /app
+
+# Ensure the client binary has executable permissions
+RUN chmod +x /app/chat-client
+
+# Run the Go application
+CMD ["/app/chat-client"]
